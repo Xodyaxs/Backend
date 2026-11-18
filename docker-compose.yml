@@ -1,0 +1,79 @@
+services:
+  db:
+    image: mysql:8.4
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mi_base_datos}
+      MYSQL_USER: ${MYSQL_USER:-libreria_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysql --host=127.0.0.1 --user="$$MYSQL_USER" --password="$$MYSQL_PASSWORD" --database="$$MYSQL_DATABASE" --execute="SELECT 1"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ms-catalogo:
+    build:
+      context: ./ms-catalogo
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/${MYSQL_DATABASE:-mi_base_datos}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
+
+  ms-usuarios:
+    build:
+      context: ./ms-usuarios
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8082
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/${MYSQL_DATABASE:-mi_base_datos}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
+
+  ms-pedidos:
+    build:
+      context: ./ms-pedidos
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8083
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/${MYSQL_DATABASE:-mi_base_datos}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - ms-usuarios
+      - ms-catalogo
+      - ms-pedidos
+    environment:
+      SERVER_PORT: 8080
+      USUARIOS_URI: http://ms-usuarios:8082
+      CATALOGO_URI: http://ms-catalogo:8081
+      PEDIDOS_URI: http://ms-pedidos:8083
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      FRONTEND_VITE_ORIGIN: ${FRONTEND_VITE_ORIGIN:-http://localhost:5173}
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:

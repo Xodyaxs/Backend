@@ -1,0 +1,82 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - ${FRONTEND_ORIGIN:http://localhost:3000}
+                  - ${FRONTEND_VITE_ORIGIN:http://localhost:5173}
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders:
+                  - "*"
+                allowCredentials: false
+                maxAge: 3600
+          routes:
+            - id: usuarios
+              uri: ${USUARIOS_URI:http://localhost:8082}
+              predicates:
+                - Path=/api/usuarios/**
+            - id: catalogo
+              uri: ${CATALOGO_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/catalogo
+              filters:
+                - SetPath=/api/libros
+            - id: catalogo-recursos
+              uri: ${CATALOGO_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/catalogo/**
+              filters:
+                - RewritePath=/api/catalogo(?<segment>/.*), /api/libros$\{segment}
+            - id: catalogo-api
+              uri: ${CATALOGO_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/libros/**
+            - id: pedidos
+              uri: ${PEDIDOS_URI:http://localhost:8083}
+              predicates:
+                - Path=/api/pedidos/**
+            - id: openapi-usuarios
+              uri: ${USUARIOS_URI:http://localhost:8082}
+              predicates:
+                - Path=/v3/api-docs/usuarios
+              filters:
+                - SetPath=/v3/api-docs
+            - id: openapi-catalogo
+              uri: ${CATALOGO_URI:http://localhost:8081}
+              predicates:
+                - Path=/v3/api-docs/catalogo
+              filters:
+                - SetPath=/v3/api-docs
+            - id: openapi-pedidos
+              uri: ${PEDIDOS_URI:http://localhost:8083}
+              predicates:
+                - Path=/v3/api-docs/pedidos
+              filters:
+                - SetPath=/v3/api-docs
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Usuarios
+        url: /v3/api-docs/usuarios
+      - name: Catálogo
+        url: /v3/api-docs/catalogo
+      - name: Pedidos
+        url: /v3/api-docs/pedidos
+    urlsPrimaryName: Usuarios

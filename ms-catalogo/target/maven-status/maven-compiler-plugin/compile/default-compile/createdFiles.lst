@@ -1,0 +1,6 @@
+libreria/ms_catalogo/config/DataLoader.class
+libreria/ms_catalogo/MsCatalogoApplication.class
+libreria/ms_catalogo/repository/LibroRepository.class
+libreria/ms_catalogo/model/Libro.class
+libreria/ms_catalogo/controller/LibroController.class
+libreria/ms_catalogo/config/SecurityConfig.class
