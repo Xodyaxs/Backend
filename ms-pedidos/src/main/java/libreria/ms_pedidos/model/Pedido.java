@@ -22,6 +22,17 @@ public class Pedido {
     @NotBlank
     private String clienteEmail;
 
+    private String nombreCliente;
+
+    @Column(length = 500)
+    private String direccion;
+
+    private String ciudad;
+
+    private String region;
+
+    private String metodoPago;
+
     @NotBlank
     @Column(length = 1000)
     private String detalleProductos;
@@ -50,6 +61,16 @@ public class Pedido {
     public void setId(Long id) { this.id = id; }
     public String getClienteEmail() { return clienteEmail; }
     public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }
+    public String getNombreCliente() { return nombreCliente; }
+    public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public String getCiudad() { return ciudad; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+    public String getMetodoPago() { return metodoPago; }
+    public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
     public String getDetalleProductos() { return detalleProductos; }
     public void setDetalleProductos(String detalleProductos) { this.detalleProductos = detalleProductos; }
     public Integer getTotal() { return total; }

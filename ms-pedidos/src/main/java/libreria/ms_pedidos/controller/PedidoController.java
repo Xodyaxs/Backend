@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import libreria.ms_pedidos.dto.CrearPedidoRequest;
 import libreria.ms_pedidos.model.Pedido;
 import libreria.ms_pedidos.repository.PedidoRepository;
 
@@ -34,8 +36,16 @@ public class PedidoController {
     }
 
     @PostMapping
-    public Pedido crearPedido(@RequestBody Pedido nuevoPedido) {
-        return pedidoRepository.save(nuevoPedido);
+    public ResponseEntity<?> crearPedido(@RequestBody CrearPedidoRequest request) {
+        if (request == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "El cuerpo del pedido es obligatorio"));
+        }
+        try {
+            return ResponseEntity.ok(pedidoRepository.save(request.toPedido()));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", exception.getMessage()));
+        }
     }
 
     @PutMapping("/{id}/estado")
