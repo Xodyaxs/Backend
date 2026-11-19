@@ -47,6 +47,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
       JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en el entorno o en .env}
+      ADMIN_INITIAL_PASSWORD: ${ADMIN_INITIAL_PASSWORD:-}
 
   ms-pedidos:
     build:
