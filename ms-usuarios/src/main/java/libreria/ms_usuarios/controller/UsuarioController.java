@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import libreria.ms_usuarios.model.Usuario;
 import libreria.ms_usuarios.repository.UsuarioRepository;
+import libreria.ms_usuarios.security.JwtService;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -26,6 +27,9 @@ public class UsuarioController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping
     public List<Usuario> listarUsuarios() {
@@ -53,11 +57,13 @@ public class UsuarioController {
 
         if (usuarioOpt.isPresent() && passwordEncoder.matches(password, usuarioOpt.get().getPassword())) {
             Usuario u = usuarioOpt.get();
+            String token = jwtService.generarToken(u.getId(), u.getEmail(), u.getRol());
             return ResponseEntity.ok(Map.of(
                 "id", u.getId(),
                 "nombre", u.getNombre(),
                 "email", u.getEmail(),
-                "rol", u.getRol()
+                "rol", u.getRol(),
+                "token", token
             ));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
