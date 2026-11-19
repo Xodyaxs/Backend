@@ -65,6 +65,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
       JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en el entorno o en .env}
+      CATALOGO_URI: http://ms-catalogo:8081
 
   api-gateway:
     build:

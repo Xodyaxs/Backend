@@ -40,6 +40,7 @@ public class SecurityConfig {
                     "/swagger-ui.html"
                 ).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/internal/inventory/**").hasRole("INVENTORY")
                 .requestMatchers(HttpMethod.GET, "/api/libros", "/api/libros/**").permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
