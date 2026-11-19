@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import libreria.ms_pedidos.model.Pedido;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record CrearPedidoRequest(
     ClienteRequest cliente,
     String nombre,
@@ -21,8 +17,9 @@ public record CrearPedidoRequest(
     String direccion,
     String ciudad,
     String region,
+    String fecha,
     String metodoPago,
-    JsonNode total,
+    Object total,
     List<ItemRequest> items,
     String detalleProductos
 ) {
@@ -73,9 +70,9 @@ public record CrearPedidoRequest(
                 if (item.cantidad() == null || item.cantidad() < 1) {
                     throw new IllegalArgumentException("La cantidad de cada producto debe ser mayor que cero");
                 }
-                String price = item.precio() == null || item.precio().isNull()
+                String price = item.precio() == null
                     ? ""
-                    : " (" + item.precio().asText() + ")";
+                    : " (" + item.precio() + ")";
                 return item.titulo().trim() + " x" + item.cantidad() + price;
             })
             .collect(Collectors.joining(", "));
@@ -86,16 +83,16 @@ public record CrearPedidoRequest(
         return details;
     }
 
-    private static int parseTotal(JsonNode value) {
-        if (value == null || value.isNull()) {
+    private static int parseTotal(Object value) {
+        if (value == null) {
             throw new IllegalArgumentException("Falta el total del pedido");
         }
 
         BigDecimal amount;
-        if (value.isNumber()) {
-            amount = value.decimalValue();
-        } else if (value.isTextual()) {
-            String normalized = value.asText()
+        if (value instanceof Number number) {
+            amount = new BigDecimal(number.toString());
+        } else if (value instanceof String text) {
+            String normalized = text
                 .trim()
                 .replaceAll("(?i)CLP", "")
                 .replace("$", "")
@@ -139,9 +136,7 @@ public record CrearPedidoRequest(
         return value.trim();
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ClienteRequest(String nombre, String email) {}
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record ItemRequest(String titulo, Integer cantidad, JsonNode precio) {}
+    public record ItemRequest(String titulo, Integer cantidad, Object precio) {}
 }
