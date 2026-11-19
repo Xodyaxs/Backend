@@ -80,6 +80,7 @@ services:
       PEDIDOS_URI: http://ms-pedidos:8083
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       FRONTEND_VITE_ORIGIN: ${FRONTEND_VITE_ORIGIN:-http://localhost:5173}
+      FRONTEND_EC2_ORIGIN: ${FRONTEND_EC2_ORIGIN:-http://54.210.169.235}
     ports:
       - "8080:8080"
 
