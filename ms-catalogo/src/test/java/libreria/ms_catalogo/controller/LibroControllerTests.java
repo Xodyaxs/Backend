@@ -20,6 +20,8 @@ class LibroControllerTests {
         Libro existente = new Libro("Título anterior", "Autor anterior", "$1", "Drama", 1, "anterior.jpg");
         existente.setId(8L);
         Libro cambios = new Libro("Título nuevo", "Autor nuevo", "$2", "Historia", 3, "nuevo.jpg");
+        cambios.setDescripcion("Descripción nueva");
+        cambios.setNovedad(true);
         cambios.setId(99L);
         when(repository.findById(8L)).thenReturn(Optional.of(existente));
         when(repository.save(existente)).thenReturn(existente);
@@ -32,9 +34,11 @@ class LibroControllerTests {
         assertThat(response.getBody().getTitulo()).isEqualTo("Título nuevo");
         assertThat(response.getBody().getAutor()).isEqualTo("Autor nuevo");
         assertThat(response.getBody().getPrecio()).isEqualTo("$2");
+        assertThat(response.getBody().getDescripcion()).isEqualTo("Descripción nueva");
         assertThat(response.getBody().getCategoria()).isEqualTo("Historia");
         assertThat(response.getBody().getStock()).isEqualTo(3);
         assertThat(response.getBody().getImagen()).isEqualTo("nuevo.jpg");
+        assertThat(response.getBody().isNovedad()).isTrue();
         verify(repository).save(existente);
     }
 

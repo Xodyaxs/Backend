@@ -46,9 +46,11 @@ public class LibroController {
             libro.setTitulo(datosActualizados.getTitulo());
             libro.setAutor(datosActualizados.getAutor());
             libro.setPrecio(datosActualizados.getPrecio());
+            libro.setDescripcion(datosActualizados.getDescripcion());
             libro.setCategoria(datosActualizados.getCategoria());
             libro.setStock(datosActualizados.getStock());
             libro.setImagen(datosActualizados.getImagen());
+            libro.setNovedad(datosActualizados.isNovedad());
             return ResponseEntity.ok(libroRepository.save(libro));
         }).orElse(ResponseEntity.notFound().build());
     }

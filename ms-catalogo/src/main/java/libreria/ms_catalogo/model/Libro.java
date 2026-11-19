@@ -21,12 +21,17 @@ public class Libro {
     @NotBlank
     private String precio;
 
+    @Column(length = 2000)
+    private String descripcion;
+
     private String categoria;
 
     @Min(0)
     private Integer stock;
 
     private String imagen;
+
+    private boolean novedad;
 
     public Libro() {}
 
@@ -47,10 +52,14 @@ public class Libro {
     public void setAutor(String autor) { this.autor = autor; }
     public String getPrecio() { return precio; }
     public void setPrecio(String precio) { this.precio = precio; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
+    public boolean isNovedad() { return novedad; }
+    public void setNovedad(boolean novedad) { this.novedad = novedad; }
 }
