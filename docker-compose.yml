@@ -32,6 +32,7 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:mysql://db:3306/${MYSQL_DATABASE:-mi_base_datos}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-libreria_app}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-libreria_dev_password}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en el entorno o en .env}
 
   ms-usuarios:
     build:
